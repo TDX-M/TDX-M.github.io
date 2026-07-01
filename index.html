@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ตรวจสอบอัตราค่าบริการไปรษณีย์ไทย · พื้นที่พิเศษ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF6EC;
+    --paper-2:#F3ECDC;
+    --ink:#231F1A;
+    --ink-soft:#5B564C;
+    --line:#DCD2B8;
+    --post-red:#D2232A;
+    --post-red-deep:#9E1B21;
+    --navy:#1C2B45;
+    --eco-blue:#1D5FA8;
+    --eco-blue-bg:#E7F0FA;
+    --ems-amber:#B36A00;
+    --ems-amber-bg:#FBF0DC;
+    --special-red:#D2232A;
+    --special-red-bg:#FCE8E7;
+    --ok-green:#2E7D4F;
+    --shadow: 0 8px 24px rgba(35,31,26,0.08);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 1px 1px, rgba(210,35,42,0.06) 1px, transparent 1px) 0 0/22px 22px,
+      var(--paper);
+    color:var(--ink);
+    font-family:'Sarabun', sans-serif;
+    line-height:1.75;
+    padding:28px 16px 60px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px;margin:0 auto;}
+
+  /* ---------- Header ---------- */
+  header{
+    display:flex;align-items:center;gap:18px;
+    margin-bottom:22px;
+    padding-bottom:22px;
+    border-bottom:2px dashed var(--line);
+  }
+  .stamp-mark{
+    flex:0 0 auto;
+    width:58px;height:58px;
+    border-radius:50%;
+    background:var(--post-red);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 14px rgba(210,35,42,0.35);
+    position:relative;
+  }
+  .stamp-mark::after{
+    content:"";
+    position:absolute; inset:5px;
+    border-radius:50%;
+    border:1.5px dashed rgba(255,255,255,0.65);
+  }
+  .stamp-mark svg{width:26px;height:26px;position:relative;z-index:1;}
+  h1{
+    font-family:'Prompt',sans-serif;
+    font-weight:700;
+    font-size:clamp(1.35rem, 2.6vw, 1.8rem);
+    margin:0 0 4px;
+    color:var(--navy);
+    letter-spacing:-0.01em;
+  }
+  header p{
+    margin:0;
+    font-size:0.92rem;
+    color:var(--ink-soft);
+  }
+  .eff-date{
+    display:inline-block;
+    margin-top:6px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.78rem;
+    font-weight:600;
+    color:var(--post-red-deep);
+    background:var(--special-red-bg);
+    padding:2px 9px;
+    border-radius:20px;
+    letter-spacing:0.02em;
+  }
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:24px 22px;
+    margin-bottom:20px;
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:5px;
+    background:repeating-linear-gradient(90deg, var(--post-red) 0 10px, transparent 10px 18px);
+    opacity:0.85;
+  }
+  .card-title{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Prompt',sans-serif;
+    font-weight:600;
+    font-size:1.08rem;
+    color:var(--navy);
+    margin:6px 0 4px;
+  }
+  .card-title .num{
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:600;
+    font-size:0.8rem;
+    color:#fff;
+    background:var(--navy);
+    width:24px;height:24px;
+    border-radius:7px;
+    display:flex;align-items:center;justify-content:center;
+    flex:0 0 auto;
+  }
+  .card-sub{
+    font-size:0.88rem;
+    color:var(--ink-soft);
+    margin:0 0 18px;
+  }
+
+  /* ---------- Form controls ---------- */
+  label{
+    display:block;
+    font-size:0.85rem;
+    font-weight:600;
+    color:var(--ink);
+    margin-bottom:6px;
+  }
+  .field{margin-bottom:16px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media (max-width:560px){.row2{grid-template-columns:1fr;}}
+
+  input[type="text"], input[type="number"]{
+    width:100%;
+    font-family:'Sarabun',sans-serif;
+    font-size:1rem;
+    padding:11px 13px;
+    border:1.5px solid var(--line);
+    border-radius:9px;
+    background:var(--paper);
+    color:var(--ink);
+    outline:none;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  input:focus{
+    border-color:var(--post-red);
+    box-shadow:0 0 0 3px rgba(210,35,42,0.12);
+    background:#fff;
+  }
+  .hint{font-size:0.78rem;color:var(--ink-soft);margin-top:5px;}
+
+  .toggle-group{display:flex;gap:10px;flex-wrap:wrap;}
+  .toggle-opt{
+    flex:1 1 200px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    padding:11px 12px;
+    cursor:pointer;
+    display:flex; align-items:flex-start; gap:9px;
+    background:var(--paper);
+    transition:all .15s;
+    font-size:0.9rem;
+  }
+  .toggle-opt input{width:16px;height:16px;margin-top:2px;accent-color:var(--post-red);flex:0 0 auto;}
+  .toggle-opt .t-title{font-weight:600;color:var(--ink);}
+  .toggle-opt .t-sub{font-size:0.78rem;color:var(--ink-soft);margin-top:1px;}
+  .toggle-opt.active{border-color:var(--post-red);background:var(--special-red-bg);}
+  .toggle-opt.active .t-title{color:var(--post-red-deep);}
+
+  button.primary{
+    font-family:'Prompt',sans-serif;
+    font-weight:600;
+    font-size:0.95rem;
+    color:#fff;
+    background:var(--post-red);
+    border:none;
+    border-radius:10px;
+    padding:12px 22px;
+    cursor:pointer;
+    transition:background .15s, transform .1s;
+  }
+  button.primary:hover{background:var(--post-red-deep);}
+  button.primary:active{transform:scale(0.98);}
+
+  /* ---------- Search result ---------- */
+  .result-box{
+    margin-top:16px;
+    border-radius:10px;
+    padding:14px 16px;
+    display:none;
+  }
+  .result-box.show{display:block;}
+  .result-box.found{
+    background:var(--special-red-bg);
+    border:1.5px solid var(--special-red);
+  }
+  .result-box.notfound{
+    background:#EEF6EF;
+    border:1.5px solid var(--ok-green);
+  }
+  .result-head{display:flex;align-items:center;gap:8px;font-weight:700;font-family:'Prompt',sans-serif;font-size:0.98rem;}
+  .badge{
+    display:inline-block;
+    font-size:0.72rem;
+    font-weight:700;
+    padding:3px 10px;
+    border-radius:20px;
+    letter-spacing:0.02em;
+  }
+  .badge.special{background:var(--special-red);color:#fff;}
+  .badge.normal{background:var(--ok-green);color:#fff;}
+  .result-detail{margin-top:6px;font-size:0.9rem;color:var(--ink-soft);}
+  .result-detail b{color:var(--ink);}
+  .match-list{margin-top:10px;font-size:0.85rem;}
+  .match-item{
+    padding:7px 10px;border-radius:7px;margin-top:5px;
+    background:rgba(255,255,255,0.7);
+    display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;
+  }
+
+  /* ---------- Price result cards ---------- */
+  .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px;}
+  @media (max-width:560px){.price-grid{grid-template-columns:1fr;}}
+  .price-card{
+    border-radius:12px;
+    padding:16px 16px 14px;
+    border:1.5px solid var(--line);
+    position:relative;
+  }
+  .price-card .p-label{
+    font-family:'Prompt',sans-serif;
+    font-weight:600;
+    font-size:0.88rem;
+    display:flex;align-items:center;gap:6px;
+  }
+  .price-card .p-value{
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:600;
+    font-size:2.1rem;
+    margin-top:8px;
+    line-height:1;
+  }
+  .price-card .p-value sup{font-size:1rem;font-weight:600;margin-left:2px;}
+  .price-card .p-note{font-size:0.78rem;margin-top:8px;color:var(--ink-soft);}
+  .price-card.eco{background:var(--eco-blue-bg);border-color:#BFD9F0;}
+  .price-card.eco .p-label{color:var(--eco-blue);}
+  .price-card.eco .p-value{color:var(--eco-blue);}
+  .price-card.ems{background:var(--ems-amber-bg);border-color:#EAD2A0;}
+  .price-card.ems .p-label{color:var(--ems-amber);}
+  .price-card.ems .p-value{color:var(--ems-amber);}
+  .price-card.special-active{border-color:var(--special-red);}
+  .price-card.special-active .p-value{color:var(--special-red) !important;}
+  .price-card.special-active .p-label{color:var(--special-red-deep,#9E1B21) !important;}
+  .price-card.disabled{
+    background:#F2F0EA;border-color:var(--line);opacity:0.75;
+  }
+  .price-card.disabled .p-value{color:var(--ink-soft);font-size:1.1rem;font-weight:500;}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+
+  /* ---------- Collapsible table sections ---------- */
+  .collapsible-head{
+    display:flex;align-items:center;justify-content:space-between;
+    cursor:pointer;
+    padding:14px 0;
+    user-select:none;
+  }
+  .collapsible-head .chev{
+    font-family:'IBM Plex Mono',monospace;
+    transition:transform .2s;
+    color:var(--post-red);
+    font-size:1.1rem;
+  }
+  .collapsible.open .chev{transform:rotate(180deg);}
+  .collapsible-body{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .3s ease;
+  }
+  .collapsible.open .collapsible-body{max-height:none;overflow:visible;}
+  .collapsible-body-inner{padding-top:6px;padding-bottom:10px;}
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:0.85rem;
+  }
+  caption{caption-side:top;text-align:left;font-size:0.8rem;color:var(--ink-soft);padding-bottom:8px;}
+  thead th{
+    font-family:'Prompt',sans-serif;
+    font-weight:600;
+    font-size:0.78rem;
+    padding:9px 8px;
+    text-align:center;
+    background:var(--navy);
+    color:#fff;
+    position:sticky;top:0;
+  }
+  thead tr.sub th{
+    background:#2A3B5C;
+    font-size:0.74rem;
+    font-weight:500;
+  }
+  thead th.special-col, thead tr.sub th.special-col{
+    background:var(--post-red-deep);
+    color:#fff;
+    font-weight:700;
+  }
+  tbody td{
+    padding:7px 8px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.83rem;
+    white-space:nowrap;
+  }
+  tbody td.wlabel{
+    font-family:'Sarabun',sans-serif;
+    text-align:left;
+    font-weight:500;
+    color:var(--ink);
+    white-space:normal;
+  }
+  tbody tr:nth-child(even){background:rgba(220,210,184,0.18);}
+  td.eco-col{color:var(--eco-blue);font-weight:600;}
+  td.ems-col{color:var(--ems-amber);font-weight:600;}
+  td.special-col{color:var(--special-red);font-weight:700;}
+  td.empty-cell{color:#BEB8A8;font-family:'Sarabun',sans-serif;}
+  .table-scroll{overflow-x:auto;border-radius:10px;border:1px solid var(--line);}
+
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 4px;font-size:0.78rem;color:var(--ink-soft);}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+
+  .area-search-mini{margin-bottom:12px;}
+  .province-group{margin-top:14px;}
+  .province-group h4{
+    font-family:'Prompt',sans-serif;font-size:0.85rem;font-weight:600;
+    color:var(--navy);margin:14px 0 6px;
+    padding-bottom:4px;border-bottom:1px solid var(--line);
+  }
+  .area-chip-list{display:flex;flex-wrap:wrap;gap:7px;}
+  .area-chip{
+    font-size:0.78rem;
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    border-radius:7px;
+    padding:5px 9px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .area-chip b{font-family:'Sarabun',sans-serif;font-weight:600;color:var(--ink);margin-left:5px;}
+
+  footer{
+    margin-top:26px;
+    font-size:0.78rem;
+    color:var(--ink-soft);
+    line-height:1.7;
+    border-top:2px dashed var(--line);
+    padding-top:16px;
+  }
+  footer .warn{
+    background:#FFF7E6;border:1px solid #F0D999;border-radius:10px;
+    padding:10px 13px;margin-bottom:10px;color:#7A5B00;
+  }
+  a{color:var(--eco-blue);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="stamp-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 6.5C3 5.67 3.67 5 4.5 5h15c.83 0 1.5.67 1.5 1.5v11c0 .83-.67 1.5-1.5 1.5h-15A1.5 1.5 0 013 17.5v-11z" stroke="white" stroke-width="1.6"/>
+        <path d="M4 6.5l8 6 8-6" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <h1>ตรวจสอบอัตราค่าบริการไปรษณีย์ · พื้นที่พิเศษ</h1>
+      <p>ค้นหาพื้นที่ค่าบริการพิเศษ และคำนวณค่าส่ง eCo‑post / EMS ในประเทศ</p>
+      <span class="eff-date">มีผลตั้งแต่วันที่ 1 มกราคม 2569</span>
+    </div>
+  </header>
+
+  <!-- ============ SECTION 1: ค้นหาพื้นที่พิเศษ ============ -->
+  <div class="card">
+    <div class="card-title"><span class="num">1</span> ตรวจสอบพื้นที่ค่าบริการพิเศษ</div>
+    <p class="card-sub">พิมพ์รหัสไปรษณีย์ปลายทาง หรือชื่ออำเภอ/พื้นที่ เพื่อตรวจสอบว่าเข้าข่าย "พื้นที่ท่องเที่ยว พื้นที่ห่างไกล และพื้นที่เกาะ" ที่มีค่าบริการเพิ่มหรือไม่</p>
+
+    <div class="field">
+      <label for="searchInput">รหัสไปรษณีย์ หรือ ชื่อพื้นที่ปลายทาง</label>
+      <input type="text" id="searchInput" placeholder="เช่น 83000, ภูเก็ต, เกาะสมุย, เกาะลันตา">
+      <div class="hint">ฐานข้อมูลอ้างอิงจากประกาศไปรษณีย์ไทย รวม 85 พื้นที่ (ดูตารางเต็มด้านล่าง)</div>
+    </div>
+
+    <div id="searchResult" class="result-box">
+      <div class="result-head" id="resultHead"></div>
+      <div class="result-detail" id="resultDetail"></div>
+      <div class="match-list" id="matchList"></div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 2: คำนวณค่าส่ง ============ -->
+  <div class="card">
+    <div class="card-title"><span class="num">2</span> คำนวณค่าส่ง แยกตามประเภทบริการ</div>
+    <p class="card-sub">กรอกน้ำหนักสิ่งของ (กรัม) แล้วเลือกประเภทพื้นที่ปลายทาง ระบบจะคำนวณราคาทั้ง eCo‑post และ EMS ให้ทันที</p>
+
+    <div class="row2">
+      <div class="field">
+        <label for="weightInput">น้ำหนัก (กรัม)</label>
+        <input type="number" id="weightInput" min="1" max="30000" step="1" placeholder="เช่น 500">
+        <div class="hint">รองรับน้ำหนักสูงสุด 30,000 กรัม (30 กก.) ตามตารางอัตรา</div>
+      </div>
+      <div class="field">
+        <label>ประเภทพื้นที่ปลายทาง</label>
+        <div class="toggle-group">
+          <label class="toggle-opt active" id="optNormal">
+            <input type="radio" name="areaType" value="normal" checked>
+            <span>
+              <span class="t-title">พื้นที่ทั่วไป</span>
+              <span class="t-sub">อัตราปกติทั่วประเทศ</span>
+            </span>
+          </label>
+          <label class="toggle-opt" id="optSpecial">
+            <input type="radio" name="areaType" value="special">
+            <span>
+              <span class="t-title" style="color:var(--post-red-deep)">ท่องเที่ยว / ห่างไกล / เกาะ</span>
+              <span class="t-sub">พื้นที่พิเศษ 85 แห่ง (ดูรายชื่อด้านล่าง)</span>
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <button class="primary" id="calcBtn">คำนวณราคา</button>
+
+    <div class="price-grid" id="priceGrid" style="display:none;"></div>
+  </div>
+
+  <!-- ============ SECTION 3: ตารางเต็ม ============ -->
+  <div class="card">
+    <div class="collapsible" id="rateCollapsible">
+      <div class="collapsible-head" data-target="rateCollapsible">
+        <div class="card-title" style="margin:0;"><span class="num">3</span> ตารางอัตราค่าบริการฉบับเต็ม (ตามพิกัดน้ำหนัก)</div>
+        <span class="chev">▾</span>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner">
+          <div class="legend">
+            <span><span class="dot" style="background:var(--eco-blue)"></span>eCo‑post พื้นที่ทั่วไป</span>
+            <span><span class="dot" style="background:var(--special-red)"></span>eCo‑post พื้นที่พิเศษ (ตัวหนา)</span>
+            <span><span class="dot" style="background:var(--ems-amber)"></span>EMS พื้นที่ทั่วไป</span>
+            <span><span class="dot" style="background:var(--special-red)"></span>EMS พื้นที่พิเศษ (ตัวหนา)</span>
+          </div>
+          <div class="table-scroll">
+            <table id="fullRateTable">
+              <caption>หน่วย: บาท/ชิ้น &nbsp;·&nbsp; eCo‑post ให้บริการเฉพาะน้ำหนักไม่เกิน 10,000 กรัม</caption>
+              <thead>
+                <tr>
+                  <th rowspan="2">พิกัดน้ำหนัก (กรัม)</th>
+                  <th colspan="2">eCo‑post</th>
+                  <th colspan="2">EMS ในประเทศ</th>
+                </tr>
+                <tr class="sub">
+                  <th>พื้นที่ทั่วไป</th>
+                  <th class="special-col">ท่องเที่ยว/ห่างไกล/เกาะ</th>
+                  <th>พื้นที่ทั่วไป</th>
+                  <th class="special-col">ท่องเที่ยว/ห่างไกล/เกาะ</th>
+                </tr>
+              </thead>
+              <tbody id="fullRateBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 4: รายชื่อพื้นที่พิเศษ 85 แห่ง ============ -->
+  <div class="card">
+    <div class="collapsible" id="areaCollapsible">
+      <div class="collapsible-head" data-target="areaCollapsible">
+        <div class="card-title" style="margin:0;"><span class="num">4</span> รายชื่อปลายทางพื้นที่พิเศษ ทั้ง 85 พื้นที่</div>
+        <span class="chev">▾</span>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner">
+          <div class="area-search-mini">
+            <input type="text" id="areaListSearch" placeholder="กรองรายชื่อ: พิมพ์จังหวัด อำเภอ หรือรหัสไปรษณีย์">
+          </div>
+          <div id="provinceGroups"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="warn">
+      ⚠️ เอกสารต้นฉบับ (ปณท ปน.๑(๓๐๒๑๔)/ลธ.๖๙๘ และรายชื่อปลายทางพื้นที่พิเศษ 85 พื้นที่ แนบท้ายบันทึกที่ ปณท รป.(รฟ.1)/1227 ลว. 28 พ.ย. 2568) เป็นไฟล์สแกน/พิมพ์เป็น PDF ทำให้บางชื่ออำเภอต้องอ่านจากภาพและตรวจทานร่วมกับรหัสไปรษณีย์จริงของแต่ละอำเภอ แม้จะตรวจสอบซ้ำแล้ว แนะนำให้เทียบกับเอกสารต้นฉบับก่อนใช้งานจริง โดยเฉพาะกรณีสำคัญ
+    </div>
+    ข้อมูลอัตราค่าบริการอ้างอิงจากประกาศไปรษณีย์ไทย มีผลตั้งแต่วันที่ 1 มกราคม 2569 เป็นต้นไป · eCo‑post คิดค่าบริการทุกชิ้นในอัตราตามพิกัดน้ำหนัก และให้บริการเฉพาะน้ำหนักไม่เกิน 10,000 กรัม · จัดทำขึ้นเพื่อการอ้างอิงเบื้องต้นเท่านั้น
+  </footer>
+
+</div>
+
+<script>
+/* =========================================================
+   DATA: 85 special-fee destination areas
+   ========================================================= */
+const specialAreas = [
+{no:1,code:"20120",name:"เกาะสีชัง",province:"ชลบุรี"},
+{no:2,code:"20150",name:"บางละมุง",province:"ชลบุรี",note:"เกาะล้าน"},
+{no:3,code:"21160",name:"แพ",province:"ระยอง",note:"เกาะเสม็ด"},
+{no:4,code:"23000",name:"เมืองตราด",province:"ตราด",note:"เกาะกูด"},
+{no:5,code:"23120",name:"แหลมงอบ",province:"ตราด",note:"เกาะหมาก"},
+{no:6,code:"23170",name:"เกาะช้าง",province:"ตราด"},
+{no:7,code:"50250",name:"สะเมิง",province:"เชียงใหม่"},
+{no:8,code:"50310",name:"อมก๋อย",province:"เชียงใหม่"},
+{no:9,code:"50350",name:"เวียงแหง",province:"เชียงใหม่"},
+{no:10,code:"55130",name:"ทุ่งช้าง",province:"น่าน"},
+{no:11,code:"55220",name:"บ่อเกลือ",province:"น่าน"},
+{no:12,code:"57170",name:"เวียงป่าเป้า",province:"เชียงราย"},
+{no:13,code:"57180",name:"แม่สรวย",province:"เชียงราย"},
+{no:14,code:"57260",name:"แม่ฟ้าหลวง",province:"เชียงราย"},
+{no:15,code:"57310",name:"เวียงแก่น",province:"เชียงราย"},
+{no:16,code:"57340",name:"ขุนตาล",province:"เชียงราย"},
+{no:17,code:"58000",name:"เมืองแม่ฮ่องสอน",province:"แม่ฮ่องสอน"},
+{no:18,code:"58110",name:"แม่สะเรียง",province:"แม่ฮ่องสอน"},
+{no:19,code:"58120",name:"แม่ลาน้อย",province:"แม่ฮ่องสอน"},
+{no:20,code:"58130",name:"ปาย",province:"แม่ฮ่องสอน"},
+{no:21,code:"58140",name:"ขุนยวม",province:"แม่ฮ่องสอน"},
+{no:22,code:"58150",name:"ปางมะผ้า",province:"แม่ฮ่องสอน"},
+{no:23,code:"63150",name:"ท่าสองยาง",province:"ตาก"},
+{no:24,code:"63170",name:"อุ้มผาง",province:"ตาก"},
+{no:25,code:"71180",name:"ทองผาภูมิ",province:"กาญจนบุรี"},
+{no:26,code:"71240",name:"สังขละบุรี",province:"กาญจนบุรี"},
+{no:27,code:"81130",name:"เหนือคลอง",province:"กระบี่",note:"เกาะศรีบอยา"},
+{no:28,code:"81150",name:"เกาะลันตา",province:"กระบี่"},
+{no:29,code:"81210",name:"เกาะพีพี",province:"กระบี่"},
+{no:30,code:"82000",name:"เมืองพังงา",province:"พังงา",note:"เกาะปันหยี"},
+{no:31,code:"82160",name:"เกาะยาว",province:"พังงา"},
+{no:32,code:"83000",name:"เมืองภูเก็ต",province:"ภูเก็ต"},
+{no:33,code:"83100",name:"กะรน",province:"ภูเก็ต"},
+{no:34,code:"83110",name:"ถลาง",province:"ภูเก็ต"},
+{no:35,code:"83120",name:"กะทู้",province:"ภูเก็ต"},
+{no:36,code:"83130",name:"ราไวย์",province:"ภูเก็ต"},
+{no:37,code:"83150",name:"ป่าตอง",province:"ภูเก็ต"},
+{no:38,code:"84140",name:"เกาะสมุย",province:"สุราษฎร์ธานี"},
+{no:39,code:"84310",name:"ละไม",province:"สุราษฎร์ธานี",note:"เกาะสมุย"},
+{no:40,code:"84320",name:"เฉวง",province:"สุราษฎร์ธานี",note:"เกาะสมุย"},
+{no:41,code:"84330",name:"แม่น้ำ",province:"สุราษฎร์ธานี",note:"เกาะสมุย"},
+{no:42,code:"84220",name:"ดอนสัก",province:"สุราษฎร์ธานี",note:"เกาะนางยวน"},
+{no:43,code:"84220",name:"ดอนสัก",province:"สุราษฎร์ธานี",note:"หมู่เกาะอ่างทอง"},
+{no:44,code:"84280",name:"เกาะพะงัน",province:"สุราษฎร์ธานี"},
+{no:45,code:"84360",name:"เกาะเต่า",province:"สุราษฎร์ธานี"},
+{no:46,code:"85000",name:"เมืองระนอง",province:"ระนอง",note:"เกาะพยาม"},
+{no:47,code:"91000",name:"เมืองสตูล",province:"สตูล"},
+{no:48,code:"91000",name:"เมืองสตูล",province:"สตูล",note:"เกาะเภตรา"},
+{no:49,code:"91110",name:"ละงู",province:"สตูล",note:"เกาะหลีเป๊ะ"},
+{no:50,code:"91110",name:"ละงู",province:"สตูล",note:"เกาะบุโหลน"},
+{no:51,code:"92110",name:"กันตัง",province:"ตรัง",note:"เกาะลิบง"},
+{no:52,code:"92110",name:"กันตัง",province:"ตรัง",note:"เกาะมุก"},
+{no:53,code:"92120",name:"ปะเหลียน",province:"ตรัง",note:"เกาะสุกร"},
+{no:54,code:"94000",name:"เมืองปัตตานี",province:"ปัตตานี"},
+{no:55,code:"94110",name:"สายบุรี",province:"ปัตตานี"},
+{no:56,code:"94120",name:"โคกโพธิ์",province:"ปัตตานี"},
+{no:57,code:"94130",name:"ปะนาเระ",province:"ปัตตานี"},
+{no:58,code:"94140",name:"มายอ",province:"ปัตตานี"},
+{no:59,code:"94150",name:"ยะหริ่ง",province:"ปัตตานี"},
+{no:60,code:"94160",name:"ยะรัง",province:"ปัตตานี"},
+{no:61,code:"94170",name:"หนองจิก",province:"ปัตตานี"},
+{no:62,code:"94180",name:"ทุ่งยางแดง",province:"ปัตตานี"},
+{no:63,code:"94190",name:"แม่ลาน",province:"ปัตตานี"},
+{no:64,code:"94220",name:"ไม้แก่น",province:"ปัตตานี"},
+{no:65,code:"94230",name:"กะพ้อ",province:"ปัตตานี"},
+{no:66,code:"95000",name:"เมืองยะลา",province:"ยะลา"},
+{no:67,code:"95110",name:"เบตง",province:"ยะลา"},
+{no:68,code:"95120",name:"ยะหา",province:"ยะลา"},
+{no:69,code:"95130",name:"บันนังสตา",province:"ยะลา"},
+{no:70,code:"95140",name:"รามัน",province:"ยะลา"},
+{no:71,code:"95150",name:"ธารโต",province:"ยะลา"},
+{no:72,code:"95160",name:"กาบัง",province:"ยะลา"},
+{no:73,code:"95170",name:"กรงปินัง",province:"ยะลา"},
+{no:74,code:"96000",name:"เมืองนราธิวาส",province:"นราธิวาส"},
+{no:75,code:"96110",name:"ตากใบ",province:"นราธิวาส"},
+{no:76,code:"96120",name:"สุไหงโก-ลก",province:"นราธิวาส"},
+{no:77,code:"96130",name:"ระแงะ",province:"นราธิวาส"},
+{no:78,code:"96140",name:"สุไหงปาดี",province:"นราธิวาส"},
+{no:79,code:"96150",name:"รือเสาะ",province:"นราธิวาส"},
+{no:80,code:"96160",name:"แว้ง",province:"นราธิวาส"},
+{no:81,code:"96170",name:"บาเจาะ",province:"นราธิวาส"},
+{no:82,code:"96180",name:"ยี่งอ",province:"นราธิวาส"},
+{no:83,code:"96190",name:"สุคิริน",province:"นราธิวาส"},
+{no:84,code:"96210",name:"ศรีสาคร",province:"นราธิวาส"},
+{no:85,code:"96220",name:"จะแนะ",province:"นราธิวาส"},
+];
+
+/* =========================================================
+   DATA: weight brackets -> [normal, special] prices
+   eco === null  => eCo-post not offered above 10,000g
+   ========================================================= */
+const brackets = [
+{max:20,    label:"ไม่เกิน 20",             eco:[20,40],   ems:[32,52]},
+{max:100,   label:"เกิน 20 – 100",          eco:[22,42],   ems:[37,57]},
+{max:250,   label:"เกิน 100 – 250",         eco:[26,46],   ems:[42,62]},
+{max:500,   label:"เกิน 250 – 500",         eco:[30,50],   ems:[52,72]},
+{max:1000,  label:"เกิน 500 – 1,000",       eco:[40,60],   ems:[67,87]},
+{max:1500,  label:"เกิน 1,000 – 1,500",     eco:[60,80],   ems:[82,102]},
+{max:2000,  label:"เกิน 1,500 – 2,000",     eco:[60,80],   ems:[97,117]},
+{max:2500,  label:"เกิน 2,000 – 2,500",     eco:[80,100],  ems:[100,120]},
+{max:3000,  label:"เกิน 2,500 – 3,000",     eco:[80,100],  ems:[105,125]},
+{max:3500,  label:"เกิน 3,000 – 3,500",     eco:[80,100],  ems:[110,130]},
+{max:4000,  label:"เกิน 3,500 – 4,000",     eco:[80,100],  ems:[120,140]},
+{max:4500,  label:"เกิน 4,000 – 4,500",     eco:[120,140], ems:[120,140]},
+{max:5000,  label:"เกิน 4,500 – 5,000",     eco:[120,140], ems:[120,140]},
+{max:5500,  label:"เกิน 5,000 – 5,500",     eco:[120,140], ems:[130,150]},
+{max:6000,  label:"เกิน 5,500 – 6,000",     eco:[120,140], ems:[140,160]},
+{max:6500,  label:"เกิน 6,000 – 6,500",     eco:[160,180], ems:[150,170]},
+{max:7000,  label:"เกิน 6,500 – 7,000",     eco:[160,180], ems:[160,180]},
+{max:7500,  label:"เกิน 7,000 – 7,500",     eco:[160,180], ems:[170,190]},
+{max:8000,  label:"เกิน 7,500 – 8,000",     eco:[160,180], ems:[180,200]},
+{max:8500,  label:"เกิน 8,000 – 8,500",     eco:[160,180], ems:[190,210]},
+{max:9000,  label:"เกิน 8,500 – 9,000",     eco:[160,180], ems:[200,220]},
+{max:9500,  label:"เกิน 9,000 – 9,500",     eco:[160,180], ems:[210,230]},
+{max:10000, label:"เกิน 9,500 – 10,000",    eco:[160,180], ems:[220,240]},
+{max:11000, label:"เกิน 10,000 – 11,000",   eco:null,      ems:[230,250]},
+{max:12000, label:"เกิน 11,000 – 12,000",   eco:null,      ems:[240,260]},
+{max:13000, label:"เกิน 12,000 – 13,000",   eco:null,      ems:[250,270]},
+{max:14000, label:"เกิน 13,000 – 14,000",   eco:null,      ems:[260,280]},
+{max:15000, label:"เกิน 14,000 – 15,000",   eco:null,      ems:[270,290]},
+{max:16000, label:"เกิน 15,000 – 16,000",   eco:null,      ems:[280,300]},
+{max:17000, label:"เกิน 16,000 – 17,000",   eco:null,      ems:[290,310]},
+{max:18000, label:"เกิน 17,000 – 18,000",   eco:null,      ems:[300,320]},
+{max:19000, label:"เกิน 18,000 – 19,000",   eco:null,      ems:[310,330]},
+{max:20000, label:"เกิน 19,000 – 20,000",   eco:null,      ems:[320,340]},
+{max:21000, label:"เกิน 20,000 – 21,000",   eco:null,      ems:[330,350]},
+{max:22000, label:"เกิน 21,000 – 22,000",   eco:null,      ems:[340,360]},
+{max:23000, label:"เกิน 22,000 – 23,000",   eco:null,      ems:[350,370]},
+{max:24000, label:"เกิน 23,000 – 24,000",   eco:null,      ems:[360,380]},
+{max:25000, label:"เกิน 24,000 – 25,000",   eco:null,      ems:[380,400]},
+{max:26000, label:"เกิน 25,000 – 26,000",   eco:null,      ems:[400,420]},
+{max:27000, label:"เกิน 26,000 – 27,000",   eco:null,      ems:[420,440]},
+{max:28000, label:"เกิน 27,000 – 28,000",   eco:null,      ems:[440,460]},
+{max:29000, label:"เกิน 28,000 – 29,000",   eco:null,      ems:[460,480]},
+{max:30000, label:"เกิน 29,000 – 30,000",   eco:null,      ems:[480,500]},
+];
+
+/* =========================================================
+   Helpers
+   ========================================================= */
+function findByCode(code){
+  return specialAreas.filter(a => a.code === code);
+}
+function searchAreas(query){
+  const q = query.trim().toLowerCase();
+  if(!q) return [];
+  return specialAreas.filter(a =>
+    a.code.includes(q) ||
+    a.name.toLowerCase().includes(q) ||
+    a.province.toLowerCase().includes(q) ||
+    (a.note && a.note.toLowerCase().includes(q))
+  );
+}
+function getBracket(weight){
+  if(weight <= 0) return null;
+  return brackets.find(b => weight <= b.max) || null;
+}
+function fmt(n){ return n.toLocaleString('th-TH'); }
+
+/* =========================================================
+   Section 1: search
+   ========================================================= */
+const searchInput = document.getElementById('searchInput');
+const searchResult = document.getElementById('searchResult');
+const resultHead = document.getElementById('resultHead');
+const resultDetail = document.getElementById('resultDetail');
+const matchList = document.getElementById('matchList');
+
+let currentIsSpecial = false;
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.trim();
+  if(!q){ searchResult.classList.remove('show'); return; }
+
+  const matches = searchAreas(q);
+  searchResult.classList.add('show');
+
+  if(matches.length === 0){
+    searchResult.className = 'result-box show notfound';
+    resultHead.innerHTML = `<span class="badge normal">พื้นที่ทั่วไป</span> ไม่พบในรายชื่อพื้นที่พิเศษ`;
+    resultDetail.innerHTML = `ปลายทางนี้คิดอัตราค่าบริการปกติ (คอลัมน์ "พื้นที่ทั่วไป")`;
+    matchList.innerHTML = '';
+    currentIsSpecial = false;
+    setAreaToggle(false);
+    return;
+  }
+
+  searchResult.className = 'result-box show found';
+  resultHead.innerHTML = `<span class="badge special">พื้นที่พิเศษ</span> พบ ${matches.length} รายการที่ตรงกัน`;
+  resultDetail.innerHTML = `ปลายทางนี้เข้าข่าย "ท่องเที่ยว / ห่างไกล / เกาะ" ต้องบวกเพิ่มค่าบริการทุกชิ้นในอัตรา 20 บาท/ชิ้น เทียบเท่าคอลัมน์สีแดงในตาราง`;
+  matchList.innerHTML = matches.map(a => `
+    <div class="match-item">
+      <span><b>${a.code}</b> · ${a.name} (${a.province})${a.note ? ' — '+a.note : ''}</span>
+    </div>
+  `).join('');
+  currentIsSpecial = true;
+  setAreaToggle(true);
+});
+
+/* =========================================================
+   Section 2: area toggle + calculator
+   ========================================================= */
+const optNormal = document.getElementById('optNormal');
+const optSpecial = document.getElementById('optSpecial');
+const radios = document.querySelectorAll('input[name="areaType"]');
+
+function setAreaToggle(isSpecial){
+  radios.forEach(r => r.checked = (r.value === 'special') === isSpecial);
+  optNormal.classList.toggle('active', !isSpecial);
+  optSpecial.classList.toggle('active', isSpecial);
+}
+[optNormal, optSpecial].forEach(opt => {
+  opt.addEventListener('click', () => {
+    const isSpecial = opt.id === 'optSpecial';
+    setAreaToggle(isSpecial);
+  });
+});
+
+const weightInput = document.getElementById('weightInput');
+const calcBtn = document.getElementById('calcBtn');
+const priceGrid = document.getElementById('priceGrid');
+
+calcBtn.addEventListener('click', () => {
+  const weight = parseFloat(weightInput.value);
+  const isSpecial = document.querySelector('input[name="areaType"]:checked').value === 'special';
+
+  if(!weight || weight <= 0){
+    priceGrid.style.display = 'grid';
+    priceGrid.innerHTML = `<div class="price-card disabled" style="grid-column:1/-1;">กรุณากรอกน้ำหนักสิ่งของเป็นกรัม (มากกว่า 0)</div>`;
+    return;
+  }
+
+  const b = getBracket(weight);
+  if(!b){
+    priceGrid.style.display = 'grid';
+    priceGrid.innerHTML = `<div class="price-card disabled" style="grid-column:1/-1;">น้ำหนักเกิน 30,000 กรัม เกินกว่าตารางอัตราที่กำหนด กรุณาติดต่อที่ทำการไปรษณีย์เพื่อสอบถามอัตราเพิ่มเติม</div>`;
+    return;
+  }
+
+  priceGrid.style.display = 'grid';
+  priceGrid.innerHTML = '';
+
+  // eCo-post card
+  const ecoAvailable = weight <= 10000 && b.eco;
+  const ecoDiv = document.createElement('div');
+  ecoDiv.className = 'price-card eco' + (ecoAvailable && isSpecial ? ' special-active' : '') + (!ecoAvailable ? ' disabled' : '');
+  if(ecoAvailable){
+    const price = isSpecial ? b.eco[1] : b.eco[0];
+    ecoDiv.innerHTML = `
+      <div class="p-label"><span class="dot" style="background:${isSpecial?'var(--special-red)':'var(--eco-blue)'}"></span>eCo‑post</div>
+      <div class="p-value">${fmt(price)}<sup>บาท</sup></div>
+      <div class="p-note">พิกัดน้ำหนัก ${b.label} กรัม · ${isSpecial ? 'อัตราพื้นที่ท่องเที่ยว/ห่างไกล/เกาะ' : 'อัตราพื้นที่ทั่วไป'}</div>
+    `;
+  } else {
+    ecoDiv.innerHTML = `
+      <div class="p-label"><span class="dot" style="background:#B7B0A0"></span>eCo‑post</div>
+      <div class="p-value">ไม่รองรับ</div>
+      <div class="p-note">eCo‑post ให้บริการเฉพาะน้ำหนักไม่เกิน 10,000 กรัม กรุณาเลือกใช้บริการ EMS แทน</div>
+    `;
+  }
+
+  // EMS card
+  const emsPrice = isSpecial ? b.ems[1] : b.ems[0];
+  const emsDiv = document.createElement('div');
+  emsDiv.className = 'price-card ems' + (isSpecial ? ' special-active' : '');
+  emsDiv.innerHTML = `
+    <div class="p-label"><span class="dot" style="background:${isSpecial?'var(--special-red)':'var(--ems-amber)'}"></span>EMS ในประเทศ</div>
+    <div class="p-value">${fmt(emsPrice)}<sup>บาท</sup></div>
+    <div class="p-note">พิกัดน้ำหนัก ${b.label} กรัม · ${isSpecial ? 'อัตราพื้นที่ท่องเที่ยว/ห่างไกล/เกาะ' : 'อัตราพื้นที่ทั่วไป'}</div>
+  `;
+
+  priceGrid.appendChild(ecoDiv);
+  priceGrid.appendChild(emsDiv);
+});
+
+/* =========================================================
+   Section 3: full rate table
+   ========================================================= */
+const fullRateBody = document.getElementById('fullRateBody');
+fullRateBody.innerHTML = brackets.map(b => `
+  <tr>
+    <td class="wlabel">${b.label} กรัม</td>
+    <td class="eco-col">${b.eco ? fmt(b.eco[0])+'.-' : '<span class="empty-cell">—</span>'}</td>
+    <td class="special-col">${b.eco ? fmt(b.eco[1])+'.-' : '<span class="empty-cell">—</span>'}</td>
+    <td class="ems-col">${fmt(b.ems[0])}.-</td>
+    <td class="special-col">${fmt(b.ems[1])}.-</td>
+  </tr>
+`).join('');
+
+/* =========================================================
+   Section 4: full area list, grouped by province
+   ========================================================= */
+const provinceGroupsEl = document.getElementById('provinceGroups');
+const areaListSearch = document.getElementById('areaListSearch');
+
+function renderProvinceGroups(filterQuery){
+  const q = (filterQuery || '').trim().toLowerCase();
+  const filtered = q ? searchAreas(q) : specialAreas;
+
+  const byProvince = {};
+  filtered.forEach(a => {
+    if(!byProvince[a.province]) byProvince[a.province] = [];
+    byProvince[a.province].push(a);
+  });
+
+  const provinces = Object.keys(byProvince);
+  if(provinces.length === 0){
+    provinceGroupsEl.innerHTML = `<p style="color:var(--ink-soft);font-size:0.85rem;">ไม่พบรายการที่ตรงกับคำค้นหา</p>`;
+    return;
+  }
+
+  provinceGroupsEl.innerHTML = provinces.map(p => `
+    <div class="province-group">
+      <h4>${p} <span style="font-weight:400;color:var(--ink-soft);">(${byProvince[p].length} พื้นที่)</span></h4>
+      <div class="area-chip-list">
+        ${byProvince[p].map(a => `<span class="area-chip">${a.code}<b>${a.name}${a.note ? ' · '+a.note : ''}</b></span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+renderProvinceGroups('');
+areaListSearch.addEventListener('input', () => renderProvinceGroups(areaListSearch.value));
+
+/* =========================================================
+   Collapsibles
+   ========================================================= */
+document.querySelectorAll('.collapsible-head').forEach(head => {
+  head.addEventListener('click', () => {
+    const target = document.getElementById(head.getAttribute('data-target'));
+    target.classList.toggle('open');
+  });
+});
+</script>
+</body>
+</html>
