@@ -23,6 +23,9 @@
     --special-red:#D2232A;
     --special-red-bg:#FCE8E7;
     --ok-green:#2E7D4F;
+    --shop-purple:#6B3FA0;
+    --shop-purple-bg:#F1E9F8;
+    --shop-purple-deep:#4B2470;
     --shadow: 0 8px 24px rgba(35,31,26,0.08);
   }
   *{box-sizing:border-box;}
@@ -254,6 +257,24 @@
   }
   .price-card .p-value sup{font-size:1rem;font-weight:600;margin-left:2px;}
   .price-card .p-note{font-size:0.78rem;margin-top:8px;color:var(--ink-soft);}
+  .price-card .p-breakdown{
+    font-size:0.78rem;
+    margin-top:9px;
+    padding-top:9px;
+    border-top:1px dashed rgba(35,31,26,0.18);
+    color:var(--ink);
+    line-height:1.9;
+  }
+  .shop-tag{
+    font-family:'Sarabun',sans-serif;
+    font-size:0.68rem;
+    font-weight:700;
+    color:#fff;
+    background:var(--shop-purple);
+    padding:2px 7px;
+    border-radius:20px;
+    vertical-align:middle;
+  }
   .price-card.eco{background:var(--eco-blue-bg);border-color:#BFD9F0;}
   .price-card.eco .p-label{color:var(--eco-blue);}
   .price-card.eco .p-value{color:var(--eco-blue);}
@@ -442,6 +463,26 @@
       </div>
     </div>
 
+    <div class="field">
+      <label>ช่องทางรับส่ง</label>
+      <div class="toggle-group">
+        <label class="toggle-opt active" id="optCounter">
+          <input type="radio" name="priceMode" value="counter" checked>
+          <span>
+            <span class="t-title">ราคาไปรษณีย์ปกติ</span>
+            <span class="t-sub">ยื่นส่งที่เคาน์เตอร์ไปรษณีย์ทั่วไป</span>
+          </span>
+        </label>
+        <label class="toggle-opt" id="optShop">
+          <input type="radio" name="priceMode" value="shop">
+          <span>
+            <span class="t-title" style="color:var(--shop-purple-deep)">ราคาหน้าร้าน Shop</span>
+            <span class="t-sub">บวกค่าบริการหน้าร้านตามพิกัดน้ำหนัก</span>
+          </span>
+        </label>
+      </div>
+    </div>
+
     <button class="primary" id="calcBtn">คำนวณราคา</button>
 
     <div class="price-grid" id="priceGrid" style="display:none;"></div>
@@ -504,9 +545,65 @@
     </div>
   </div>
 
+  <!-- ============ SECTION 5: ตารางราคาหน้าร้าน Shop ============ -->
+  <div class="card">
+    <div class="collapsible" id="shopCollapsible">
+      <div class="collapsible-head" data-target="shopCollapsible">
+        <div class="card-title" style="margin:0;"><span class="num">5</span> ตารางราคาหน้าร้าน Shop ฉบับเต็ม (บวกค่าบริการหน้าร้าน)</div>
+        <span class="chev">▾</span>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner">
+          <p class="card-sub" style="margin-top:0;">ราคาหน้าร้าน = ราคาไปรษณีย์ปกติ (ตามพื้นที่ทั่วไป/พื้นที่พิเศษ) + ค่าบริการหน้าร้านตามพิกัดน้ำหนัก + สำหรับพื้นที่พิเศษบวกเพิ่มอีก 25 บาท</p>
+          <div class="legend">
+            <span><span class="dot" style="background:var(--shop-purple)"></span>ค่าบริการหน้าร้านตามพิกัดน้ำหนัก</span>
+            <span><span class="dot" style="background:var(--eco-blue)"></span>eCo‑post พื้นที่ทั่วไป</span>
+            <span><span class="dot" style="background:var(--special-red)"></span>พื้นที่พิเศษ (ตัวหนา, รวม +25 บาท)</span>
+            <span><span class="dot" style="background:var(--ems-amber)"></span>EMS พื้นที่ทั่วไป</span>
+          </div>
+
+          <h4 style="font-family:'Prompt',sans-serif;font-size:0.85rem;color:var(--navy);margin:16px 0 6px;">ค่าบริการหน้าร้านตามพิกัดน้ำหนัก (บวกเพิ่มจากราคาไปรษณีย์ปกติ)</h4>
+          <div class="table-scroll" style="margin-bottom:18px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>พิกัดน้ำหนัก</th>
+                  <th>ค่าบริการหน้าร้านเพิ่ม</th>
+                  <th class="special-col">พื้นที่พิเศษ เพิ่มอีก</th>
+                </tr>
+              </thead>
+              <tbody id="shopTierBody"></tbody>
+            </table>
+          </div>
+
+          <h4 style="font-family:'Prompt',sans-serif;font-size:0.85rem;color:var(--navy);margin:16px 0 6px;">ราคาหน้าร้านรวม แยกตามพิกัดน้ำหนักละเอียด</h4>
+          <div class="table-scroll">
+            <table id="shopRateTable">
+              <caption>หน่วย: บาท/ชิ้น &nbsp;·&nbsp; eCo‑post ให้บริการเฉพาะน้ำหนักไม่เกิน 10,000 กรัม</caption>
+              <thead>
+                <tr>
+                  <th rowspan="2">พิกัดน้ำหนัก (กรัม)</th>
+                  <th colspan="2">eCo‑post (หน้าร้าน)</th>
+                  <th colspan="2">EMS (หน้าร้าน)</th>
+                </tr>
+                <tr class="sub">
+                  <th>พื้นที่ทั่วไป</th>
+                  <th class="special-col">ท่องเที่ยว/ห่างไกล/เกาะ</th>
+                  <th>พื้นที่ทั่วไป</th>
+                  <th class="special-col">ท่องเที่ยว/ห่างไกล/เกาะ</th>
+                </tr>
+              </thead>
+              <tbody id="shopRateBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <footer>
     <div class="warn">
-      ⚠️ เอกสารต้นฉบับ (ปณท ปน.๑(๓๐๒๑๔)/ลธ.๖๙๘ และรายชื่อปลายทางพื้นที่พิเศษ 85 พื้นที่ แนบท้ายบันทึกที่ ปณท รป.(รฟ.1)/1227 ลว. 28 พ.ย. 2568) เป็นไฟล์สแกน/พิมพ์เป็น PDF ทำให้บางชื่ออำเภอต้องอ่านจากภาพและตรวจทานร่วมกับรหัสไปรษณีย์จริงของแต่ละอำเภอ แม้จะตรวจสอบซ้ำแล้ว แนะนำให้เทียบกับเอกสารต้นฉบับก่อนใช้งานจริง โดยเฉพาะกรณีสำคัญ
+      ⚠️ เอกสารต้นฉบับ (ปณท ปน.๑(๓๐๒๑๔)/ลธ.๖๙๘ และรายชื่อปลายทางพื้นที่พิเศษ 85 พื้นที่ แนบท้ายบันทึกที่ ปณท รป.(รฟ.1)/1227 ลว. 28 พ.ย. 2568) เป็นไฟล์สแกน/พิมพ์เป็น PDF ทำให้บางชื่ออำเภอต้องอ่านจากภาพและตรวจทานร่วมกับรหัสไปรษณีย์จริงของแต่ละอำเภอ แม้จะตรวจสอบซ้ำแล้ว แนะนำให้เทียบกับเอกสารต้นฉบับก่อนใช้งานจริง โดยเฉพาะกรณีสำคัญ<br>⚠️ อัตราค่าบริการ "หน้าร้าน Shop" เป็นข้อมูลที่ระบุเพิ่มเติมโดยผู้ใช้งาน (ไม่ได้อยู่ในเอกสารต้นฉบับของไปรษณีย์ไทยที่แนบมา) กรุณาตรวจสอบยอดก่อนเรียกเก็บเงินจริงทุกครั้ง
     </div>
     ข้อมูลอัตราค่าบริการอ้างอิงจากประกาศไปรษณีย์ไทย มีผลตั้งแต่วันที่ 1 มกราคม 2569 เป็นต้นไป · eCo‑post คิดค่าบริการทุกชิ้นในอัตราตามพิกัดน้ำหนัก และให้บริการเฉพาะน้ำหนักไม่เกิน 10,000 กรัม · จัดทำขึ้นเพื่อการอ้างอิงเบื้องต้นเท่านั้น
   </footer>
@@ -718,7 +815,26 @@ searchInput.addEventListener('input', () => {
 });
 
 /* =========================================================
-   Section 2: area toggle + calculator
+   DATA: shop drop-off surcharge tiers (บวกเพิ่มจากราคาไปรษณีย์ปกติ)
+   ใช้กับทั้ง eCo-post และ EMS, พื้นที่พิเศษบวกเพิ่มอีก 25 บาท
+   ========================================================= */
+const shopTiers = [
+  {max:6000,  surcharge:35,  label:"1 – 6,000 กรัม"},
+  {max:10000, surcharge:38,  label:"เกิน 6,000 – 10,000 กรัม"},
+  {max:15000, surcharge:48,  label:"เกิน 10,000 – 15,000 กรัม"},
+  {max:20000, surcharge:58,  label:"เกิน 15,000 – 20,000 กรัม"},
+  {max:25000, surcharge:88,  label:"เกิน 20,000 – 25,000 กรัม"},
+  {max:30000, surcharge:108, label:"เกิน 25,000 – 30,000 กรัม"},
+];
+const SHOP_SPECIAL_EXTRA = 25;
+
+function getShopTier(weight){
+  if(weight <= 0) return null;
+  return shopTiers.find(t => weight <= t.max) || null;
+}
+
+/* =========================================================
+   Section 2: area toggle + price-mode toggle + calculator
    ========================================================= */
 const optNormal = document.getElementById('optNormal');
 const optSpecial = document.getElementById('optSpecial');
@@ -736,13 +852,62 @@ function setAreaToggle(isSpecial){
   });
 });
 
+const optCounter = document.getElementById('optCounter');
+const optShop = document.getElementById('optShop');
+const priceModeRadios = document.querySelectorAll('input[name="priceMode"]');
+[optCounter, optShop].forEach(opt => {
+  opt.addEventListener('click', () => {
+    const isShop = opt.id === 'optShop';
+    priceModeRadios.forEach(r => r.checked = (r.value === 'shop') === isShop);
+    optCounter.classList.toggle('active', !isShop);
+    optShop.classList.toggle('active', isShop);
+  });
+});
+
 const weightInput = document.getElementById('weightInput');
 const calcBtn = document.getElementById('calcBtn');
 const priceGrid = document.getElementById('priceGrid');
 
+function buildPriceCard({type, available, basePrice, isSpecial, isShop, shopSurcharge, weightLabel, disabledNote}){
+  const colorVar = type === 'eco' ? '--eco-blue' : '--ems-amber';
+  const typeLabel = type === 'eco' ? 'eCo‑post' : 'EMS ในประเทศ';
+  const div = document.createElement('div');
+
+  if(!available){
+    div.className = 'price-card disabled';
+    div.innerHTML = `
+      <div class="p-label"><span class="dot" style="background:#B7B0A0"></span>${typeLabel}</div>
+      <div class="p-value">ไม่รองรับ</div>
+      <div class="p-note">${disabledNote}</div>
+    `;
+    return div;
+  }
+
+  const dotColor = isSpecial ? 'var(--special-red)' : `var(${colorVar})`;
+  let total = basePrice;
+  let breakdownLines = [];
+
+  if(isShop){
+    total = basePrice + shopSurcharge + (isSpecial ? SHOP_SPECIAL_EXTRA : 0);
+    breakdownLines.push(`ราคาไปรษณีย์ปกติ ${fmt(basePrice)} บาท`);
+    breakdownLines.push(`+ ค่าบริการหน้าร้าน ${fmt(shopSurcharge)} บาท`);
+    if(isSpecial) breakdownLines.push(`+ พื้นที่พิเศษเพิ่มเติม ${fmt(SHOP_SPECIAL_EXTRA)} บาท`);
+  }
+
+  div.className = 'price-card ' + type + (isSpecial ? ' special-active' : '');
+  div.innerHTML = `
+    <div class="p-label"><span class="dot" style="background:${dotColor}"></span>${typeLabel}${isShop ? ' <span class="shop-tag">หน้าร้าน</span>' : ''}</div>
+    <div class="p-value">${fmt(total)}<sup>บาท</sup></div>
+    ${isShop ? `<div class="p-breakdown">${breakdownLines.join('<br>')}</div>` : ''}
+    <div class="p-note">พิกัดน้ำหนัก ${weightLabel} กรัม · ${isSpecial ? 'อัตราพื้นที่ท่องเที่ยว/ห่างไกล/เกาะ' : 'อัตราพื้นที่ทั่วไป'}</div>
+  `;
+  return div;
+}
+
 calcBtn.addEventListener('click', () => {
   const weight = parseFloat(weightInput.value);
   const isSpecial = document.querySelector('input[name="areaType"]:checked').value === 'special';
+  const isShop = document.querySelector('input[name="priceMode"]:checked').value === 'shop';
 
   if(!weight || weight <= 0){
     priceGrid.style.display = 'grid';
@@ -757,37 +922,35 @@ calcBtn.addEventListener('click', () => {
     return;
   }
 
+  const shopTier = isShop ? getShopTier(weight) : null;
+
   priceGrid.style.display = 'grid';
   priceGrid.innerHTML = '';
 
   // eCo-post card
-  const ecoAvailable = weight <= 10000 && b.eco;
-  const ecoDiv = document.createElement('div');
-  ecoDiv.className = 'price-card eco' + (ecoAvailable && isSpecial ? ' special-active' : '') + (!ecoAvailable ? ' disabled' : '');
-  if(ecoAvailable){
-    const price = isSpecial ? b.eco[1] : b.eco[0];
-    ecoDiv.innerHTML = `
-      <div class="p-label"><span class="dot" style="background:${isSpecial?'var(--special-red)':'var(--eco-blue)'}"></span>eCo‑post</div>
-      <div class="p-value">${fmt(price)}<sup>บาท</sup></div>
-      <div class="p-note">พิกัดน้ำหนัก ${b.label} กรัม · ${isSpecial ? 'อัตราพื้นที่ท่องเที่ยว/ห่างไกล/เกาะ' : 'อัตราพื้นที่ทั่วไป'}</div>
-    `;
-  } else {
-    ecoDiv.innerHTML = `
-      <div class="p-label"><span class="dot" style="background:#B7B0A0"></span>eCo‑post</div>
-      <div class="p-value">ไม่รองรับ</div>
-      <div class="p-note">eCo‑post ให้บริการเฉพาะน้ำหนักไม่เกิน 10,000 กรัม กรุณาเลือกใช้บริการ EMS แทน</div>
-    `;
-  }
+  const ecoAvailable = weight <= 10000 && !!b.eco;
+  const ecoBase = ecoAvailable ? (isSpecial ? b.eco[1] : b.eco[0]) : null;
+  const ecoDiv = buildPriceCard({
+    type:'eco',
+    available: ecoAvailable,
+    basePrice: ecoBase,
+    isSpecial, isShop,
+    shopSurcharge: shopTier ? shopTier.surcharge : 0,
+    weightLabel: b.label,
+    disabledNote: 'eCo‑post ให้บริการเฉพาะน้ำหนักไม่เกิน 10,000 กรัม กรุณาเลือกใช้บริการ EMS แทน'
+  });
 
   // EMS card
-  const emsPrice = isSpecial ? b.ems[1] : b.ems[0];
-  const emsDiv = document.createElement('div');
-  emsDiv.className = 'price-card ems' + (isSpecial ? ' special-active' : '');
-  emsDiv.innerHTML = `
-    <div class="p-label"><span class="dot" style="background:${isSpecial?'var(--special-red)':'var(--ems-amber)'}"></span>EMS ในประเทศ</div>
-    <div class="p-value">${fmt(emsPrice)}<sup>บาท</sup></div>
-    <div class="p-note">พิกัดน้ำหนัก ${b.label} กรัม · ${isSpecial ? 'อัตราพื้นที่ท่องเที่ยว/ห่างไกล/เกาะ' : 'อัตราพื้นที่ทั่วไป'}</div>
-  `;
+  const emsBase = isSpecial ? b.ems[1] : b.ems[0];
+  const emsDiv = buildPriceCard({
+    type:'ems',
+    available: true,
+    basePrice: emsBase,
+    isSpecial, isShop,
+    shopSurcharge: shopTier ? shopTier.surcharge : 0,
+    weightLabel: b.label,
+    disabledNote: ''
+  });
 
   priceGrid.appendChild(ecoDiv);
   priceGrid.appendChild(emsDiv);
@@ -806,6 +969,36 @@ fullRateBody.innerHTML = brackets.map(b => `
     <td class="special-col">${fmt(b.ems[1])}.-</td>
   </tr>
 `).join('');
+
+/* =========================================================
+   Section 5: shop drop-off price table
+   ========================================================= */
+const shopTierBody = document.getElementById('shopTierBody');
+shopTierBody.innerHTML = shopTiers.map(t => `
+  <tr>
+    <td class="wlabel">${t.label}</td>
+    <td class="eco-col" style="color:var(--shop-purple);">+${fmt(t.surcharge)}.-</td>
+    <td class="special-col">+${fmt(t.surcharge + SHOP_SPECIAL_EXTRA)}.-</td>
+  </tr>
+`).join('');
+
+const shopRateBody = document.getElementById('shopRateBody');
+shopRateBody.innerHTML = brackets.map(b => {
+  const tier = getShopTier(b.max);
+  const sur = tier ? tier.surcharge : 0;
+  const ecoNormal = b.eco ? b.eco[0] + sur : null;
+  const ecoSpecial = b.eco ? b.eco[1] + sur + SHOP_SPECIAL_EXTRA : null;
+  const emsNormal = b.ems[0] + sur;
+  const emsSpecial = b.ems[1] + sur + SHOP_SPECIAL_EXTRA;
+  return `
+  <tr>
+    <td class="wlabel">${b.label} กรัม</td>
+    <td class="eco-col">${ecoNormal !== null ? fmt(ecoNormal)+'.-' : '<span class="empty-cell">—</span>'}</td>
+    <td class="special-col">${ecoSpecial !== null ? fmt(ecoSpecial)+'.-' : '<span class="empty-cell">—</span>'}</td>
+    <td class="ems-col">${fmt(emsNormal)}.-</td>
+    <td class="special-col">${fmt(emsSpecial)}.-</td>
+  </tr>`;
+}).join('');
 
 /* =========================================================
    Section 4: full area list, grouped by province
